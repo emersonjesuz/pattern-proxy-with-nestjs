@@ -1,0 +1,37 @@
+services:
+  nest-backend:
+    container_name: nest-app
+    image: nest-api
+    build: .
+    ports:
+      - 3000:3000
+
+    networks:
+      - backend_network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+  redis:
+    container_name: redis-db
+    image: redis
+    environment:
+      - REDIS_PORT=6379
+    ports:
+      - 6379:6379
+    networks:
+      - backend_network
+    restart: unless-stopped
+    volumes:
+      - redis:/data
+
+networks:
+  backend_network:
+    driver: bridge
+
+volumes:
+  redis:
+    driver: local
